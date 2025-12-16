@@ -3,17 +3,14 @@
 FAQ Scraper Web UI - Flask application with optimized crawling
 """
 
-import asyncio
 import json
 import re
-import sys
 from datetime import datetime, timezone
 from urllib.parse import urljoin, urlparse
 from typing import Set, List, Dict, Optional, Tuple
 
 import requests
 from flask import Flask, render_template, request, jsonify
-from playwright.async_api import async_playwright
 from bs4 import BeautifulSoup
 
 app = Flask(__name__)
@@ -423,7 +420,7 @@ class FAQScraper:
                 return None
             
             html = response.text
-            soup = BeautifulSoup(html, "lxml")
+            soup = BeautifulSoup(html, "html.parser")
             
             for element in soup(["script", "style", "noscript", "iframe"]):
                 element.decompose()
@@ -449,7 +446,7 @@ class FAQScraper:
                 pass
             
             html = await page.content()
-            soup = BeautifulSoup(html, "html.parser")
+            soup = BeautifulSoup(html, "lxml")
             
             for element in soup(["script", "style", "noscript", "iframe"]):
                 element.decompose()
