@@ -430,7 +430,7 @@ class FAQScraper:
             return soup, html, links
             
         except Exception as e:
-            print(f"Error fetching {url}: {e}", file=sys.stderr)
+            print(f"Error fetching {url}: {e}")
             return None
 
     async def _fetch_page(self, page, url: str) -> Optional[Tuple[BeautifulSoup, str, List[Tuple[str, str]]]]:
@@ -456,14 +456,14 @@ class FAQScraper:
             return soup, html, links
             
         except Exception as e:
-            print(f"Playwright error for {url}, trying requests fallback...", file=sys.stderr)
+            print(f"Playwright error for {url}, trying requests fallback...")
             return self._fetch_page_sync(url)
 
     def scrape_sync(self) -> Dict:
         """Synchronous scrape method using requests only."""
         # First, fetch homepage to get all links
         self.visited_urls.add(self.base_url)
-        print(f"Crawling: {self.base_url}", file=sys.stderr)
+        print(f"Crawling: {self.base_url}")
         
         homepage_result = self._fetch_page_sync(self.base_url)
         all_links_with_text = []
@@ -481,11 +481,11 @@ class FAQScraper:
         if faq_links:
             # FAQ page found! Crawl only FAQ pages
             faq_urls = [url for url, _ in faq_links]
-            print(f"FAQ page(s) found: {faq_urls}", file=sys.stderr)
+            print(f"FAQ page(s) found: {faq_urls}")
             for faq_url, _ in faq_links:
                 if faq_url not in self.visited_urls:
                     self.visited_urls.add(faq_url)
-                    print(f"Crawling FAQ: {faq_url}", file=sys.stderr)
+                    print(f"Crawling FAQ: {faq_url}")
                     
                     result = self._fetch_page_sync(faq_url)
                     if result:
@@ -495,11 +495,11 @@ class FAQScraper:
             
             # If we found FAQs from dedicated FAQ pages, we're done
             if self.all_faqs:
-                print(f"Found {len(self.all_faqs)} FAQs from dedicated FAQ page(s). Stopping crawl.", file=sys.stderr)
+                print(f"Found {len(self.all_faqs)} FAQs from dedicated FAQ page(s). Stopping crawl.")
         
         # If no FAQ page found or no FAQs extracted, crawl all pages
         if not self.all_faqs:
-            print("No dedicated FAQ page found or no FAQs extracted. Crawling all pages...", file=sys.stderr)
+            print("No dedicated FAQ page found or no FAQs extracted. Crawling all pages...")
             to_crawl = [(url, text) for url, text in all_links_with_text if url not in self.visited_urls]
             
             while to_crawl and len(self.visited_urls) < self.max_pages:
@@ -508,7 +508,7 @@ class FAQScraper:
                     continue
                 
                 self.visited_urls.add(url)
-                print(f"Crawling: {url}", file=sys.stderr)
+                print(f"Crawling: {url}")
                 
                 result = self._fetch_page_sync(url)
                 if result:
@@ -554,7 +554,7 @@ class FAQScraper:
                 
                 # First, fetch homepage to get all links
                 self.visited_urls.add(self.base_url)
-                print(f"Crawling: {self.base_url}", file=sys.stderr)
+                print(f"Crawling: {self.base_url}")
                 
                 homepage_result = await self._fetch_page(page, self.base_url)
                 all_links_with_text = []
@@ -572,11 +572,11 @@ class FAQScraper:
                 if faq_links:
                     # FAQ page found! Crawl only FAQ pages
                     faq_urls = [url for url, _ in faq_links]
-                    print(f"FAQ page(s) found: {faq_urls}", file=sys.stderr)
+                    print(f"FAQ page(s) found: {faq_urls}")
                     for faq_url, _ in faq_links:
                         if faq_url not in self.visited_urls:
                             self.visited_urls.add(faq_url)
-                            print(f"Crawling FAQ: {faq_url}", file=sys.stderr)
+                            print(f"Crawling FAQ: {faq_url}")
                             
                             result = await self._fetch_page(page, faq_url)
                             if result:
@@ -586,11 +586,11 @@ class FAQScraper:
                     
                     # If we found FAQs from dedicated FAQ pages, we're done
                     if self.all_faqs:
-                        print(f"Found {len(self.all_faqs)} FAQs from dedicated FAQ page(s). Stopping crawl.", file=sys.stderr)
+                        print(f"Found {len(self.all_faqs)} FAQs from dedicated FAQ page(s). Stopping crawl.")
                 
                 # If no FAQ page found or no FAQs extracted, crawl all pages
                 if not self.all_faqs:
-                    print("No dedicated FAQ page found or no FAQs extracted. Crawling all pages...", file=sys.stderr)
+                    print("No dedicated FAQ page found or no FAQs extracted. Crawling all pages...")
                     to_crawl = [(url, text) for url, text in all_links_with_text if url not in self.visited_urls]
                     
                     while to_crawl and len(self.visited_urls) < self.max_pages:
@@ -599,7 +599,7 @@ class FAQScraper:
                             continue
                         
                         self.visited_urls.add(url)
-                        print(f"Crawling: {url}", file=sys.stderr)
+                        print(f"Crawling: {url}")
                         
                         result = await self._fetch_page(page, url)
                         if result:
@@ -623,7 +623,7 @@ class FAQScraper:
                 except:
                     pass
         except Exception as e:
-            print(f"Playwright failed, falling back to requests: {e}", file=sys.stderr)
+            print(f"Playwright failed, falling back to requests: {e}")
             return self.scrape_sync()
         
         return {
