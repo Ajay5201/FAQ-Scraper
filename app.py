@@ -449,7 +449,7 @@ class FAQScraper:
                 pass
             
             html = await page.content()
-            soup = BeautifulSoup(html, "lxml")
+            soup = BeautifulSoup(html, "html.parser")
             
             for element in soup(["script", "style", "noscript", "iframe"]):
                 element.decompose()
